@@ -1,0 +1,22 @@
+[Unit]
+Description=SMS Platforma API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/sms-platforma
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3100
+Environment=PUBLIC_BASE_URL=https://isfandior.duckdns.org
+Environment=APP_VERSION=1.0
+ExecStart=/usr/bin/node /home/ubuntu/sms-platforma/backend/server.js
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

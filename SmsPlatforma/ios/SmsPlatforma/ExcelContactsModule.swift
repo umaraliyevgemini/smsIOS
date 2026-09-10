@@ -235,8 +235,8 @@ private class ZipRead {
             s.next_in = UnsafeMutablePointer<Bytef>(mutating: base.assumingMemoryBound(to: Bytef.self))
             s.avail_in = uInt(input.count); s.next_out = dest; s.avail_out = uInt(cap)
             guard sms_inflateInit2(&s, -15) == Z_OK else { throw ZErr.bad }
-            defer { inflateEnd(&s) }
-            guard inflate(&s, Z_FINISH) == Z_STREAM_END else { throw ZErr.bad }
+            defer { sms_zlib_inflateEnd(&s) }
+            guard sms_zlib_inflate(&s, Z_FINISH) == Z_STREAM_END else { throw ZErr.bad }
             return Int(s.total_out)
         }
         return Data(bytes: dest, count: out)

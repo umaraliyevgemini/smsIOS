@@ -236,7 +236,7 @@ private class ZipRead {
             s.avail_in = uInt(input.count); s.next_out = dest; s.avail_out = uInt(cap)
             guard sms_inflateInit2(&s, -15) == Z_OK else { throw ZErr.bad }
             defer { inflateEnd(&s) }
-            guard Foundation.inflate(&s, Z_FINISH) == Z_STREAM_END else { throw ZErr.bad }
+            guard inflate(&s, Z_FINISH) == Z_STREAM_END else { throw ZErr.bad }
             return Int(s.total_out)
         }
         return Data(bytes: dest, count: out)
@@ -298,14 +298,14 @@ private class WSXml: NSObject, XMLParserDelegate {
         case "row": inR = true; row = []; col = 0
         case "c" where inR: inC = true; typ = attributes["t"]; val = ""
             if let r = attributes["r"] { col = Self.colIdx(r) }
-        case "v", "t" where inC: inV = true; val = ""
+        case "v" where inC, "t" where inC: inV = true; val = ""
         default: break
         }
     }
     func parser(_ p: XMLParser, foundCharacters s: String) { if inV { val += s } }
     func parser(_ p: XMLParser, didEndElement e: String, namespaceURI: String?, qualifiedName: String?) {
         switch e {
-        case "v", "t" where inC: inV = false
+        case "v" where inC, "t" where inC: inV = false
         case "c":
             let v: String
             if typ == "s", let i = Int(val), i < ss.count { v = ss[i] }
